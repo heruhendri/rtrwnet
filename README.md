@@ -46,14 +46,14 @@ php-mbstring
    ```
    mysql -u root -p
    ```
-   
+
    ```sql
    CREATE DATABASE billingrtrwnet;
    ```
 
 2. **Import Database**
    ```bash
-   mysql -u username -p billingrtrwnet < database.sql
+   mysql -u username -p billingrtrwnet < nillingrtrwnet.sql
    ```
 
 3. **Konfigurasi Database**
