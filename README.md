@@ -53,7 +53,7 @@ php-mbstring
 
 2. **Import Database**
    ```bash
-   mysql -u username -p billingrtrwnet < nillingrtrwnet.sql
+   mysql -u username -p billingrtrwnet < billingrtrwnet.sql
    ```
 
 3. **Konfigurasi Database**
