@@ -61,7 +61,52 @@ $system_resources = [
     'cpu_count' => 'N/A',
     'cpu_frequency' => 'N/A'
 ];
+<?php
+// ...existing code...
+<?php
 
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use RouterOS\Client;
+use RouterOS\Query;
+
+class DashboardController extends Controller
+{
+    public function monitor(Request $request)
+    {
+        // koneksi ke RouterOS (ambil dari env)
+        $client = new Client([
+            'host' => env('ROUTER_HOST'),
+            'user' => env('ROUTER_USER'),
+            'pass' => env('ROUTER_PASS'),
+            'port' => env('ROUTER_PORT', 8728),
+        ]);
+
+        // PPP aktif
+        $activeResp = $client->query(new Query('/ppp/active/print'))->read();
+        $pppActive = is_array($activeResp) ? count($activeResp) : 0;
+
+        // Semua PPP secret (total PPP/PPOE accounts)
+        $secretsResp = $client->query(new Query('/ppp/secret/print'))->read();
+        $pppTotal = is_array($secretsResp) ? count($secretsResp) : 0;
+
+        // PPP nonaktif = total - aktif
+        $pppInactive = max(0, $pppTotal - $pppActive);
+
+        // Hotspot aktif
+        $hotspotResp = $client->query(new Query('/ip/hotspot/active/print'))->read();
+        $hotspotActive = is_array($hotspotResp) ? count($hotspotResp) : 0;
+
+        return response()->json([
+            'ppp_active' => $pppActive,
+            'ppp_inactive' => $pppInactive,
+            'ppp_total' => $pppTotal,
+            'hotspot_active' => $hotspotActive,
+        ]);
+    }
+}
+// ...existing code...
 if (file_exists(__DIR__ . '/../config/config_mikrotik.php')) {
     try {
         require_once __DIR__ . '/../config/config_mikrotik.php';
